@@ -9,6 +9,11 @@
 #
 # parameter 1:      the text to be displayed
 # parameter 2 3 4:  the green/red/blue value of the text foreground color
+# parameter 5 6 7:  the green/red/blue value of the background color
+# parameter 8:      wait until the message is shown N times
+#                   (default 1, use 0 for no wait)
+# parameter 9:      the speed in 0.01 seconds per pixel shift
+# parameter 10:     the IP4 address of the ESP with the display
 #
 
 import socket
@@ -19,6 +24,7 @@ display="192.168.0.190"
 
 msg='12345678.90'
 
+count= 1
 speed= 30
 
 # Background color: (very dimmed green)
@@ -32,6 +38,14 @@ if l >= 2:
     msg= sys.argv[1]
 if l >= 3:
     fgc= [ int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]) ]
+if l >= 6:
+    bgc= [ int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]) ]
+if l >= 9:
+    count= int(sys.argv[8])
+if l >= 10:
+    speed= int(sys.argv[9])
+if l >= 11:
+    display= sys.argv[10]
 
 #
 # Font bitmap data converted from the X11 3x5 micro font:
@@ -97,11 +111,11 @@ bm = {
    'X': [3, [ 0xA0, 0xE0, 0x40, 0xE0, 0xA0 ] ],
    'Y': [3, [ 0xA0, 0xA0, 0xE0, 0x40, 0x40 ] ],
    'Z': [3, [ 0xE0, 0x20, 0x40, 0x80, 0xE0 ] ],
-   '[': [2, [ 0x60, 0x40, 0x40, 0x40, 0x60 ] ],
+   '[': [3, [ 0x60, 0x40, 0x40, 0x40, 0x60 ] ],
    '\\': [3, [ 0x80, 0x80, 0x40, 0x40, 0x20 ] ],
-   ']': [2, [ 0xC0, 0x40, 0x40, 0x40, 0xC0 ] ],
+   ']': [3, [ 0xC0, 0x40, 0x40, 0x40, 0xC0 ] ],
    '^': [3, [ 0x40, 0xA0, 0x00, 0x00, 0x00 ] ],
-   '_': [4, [ 0x00, 0x00, 0x00, 0x00, 0xE0 ] ],
+   '_': [3, [ 0x00, 0x00, 0x00, 0x00, 0xE0 ] ],
    '`': [2, [ 0x40, 0x60, 0x00, 0x00, 0x00 ] ],
    'a': [3, [ 0x00, 0xE0, 0x60, 0xA0, 0xE0 ] ],
    'b': [3, [ 0x80, 0xE0, 0xA0, 0xA0, 0xE0 ] ],
@@ -191,5 +205,11 @@ for c in msg:
 #print(b)
 
 s.send(b)
+
+if count > 0:
+    while True:
+        line= s.recv(1024)
+        if int(str(line[0])) == 48+count:
+            break
 
 #print(s.recv(1024))

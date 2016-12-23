@@ -79,6 +79,7 @@ telnet_srv:listen(23, function(socket)
             local d = ws2812.newBuffer(l, 3)
             l= l/5
             local count = l
+            local shown = 0
             d:replace(s)
             b:fill(bg1, bg2, bg3)
             ws2812.write(b)
@@ -96,12 +97,16 @@ telnet_srv:listen(23, function(socket)
                 end
                 ws2812.write(b)
                 count= count-1
+                if count == -7 then
+                    shown = shown + 1
+                    print(shown)
+                end
                 if count == -8 then
                     count = l
                 end
             end)
         else
-        node.input(l)           -- works like pcall(loadstring(l)) but support multiple separate line
+            node.input(l)           -- works like pcall(loadstring(l)) but support multiple separate line
         end
     end)
     socket:on("disconnection", function(c)
