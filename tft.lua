@@ -124,7 +124,8 @@ function _writeData(HI, LO)
   spi.send(1, HI, LO)
   gpio.write(TFT_CS, gpio.HIGH)
 end
-										function _writeRegister(reg, data)
+
+function _writeRegister(reg, data)
   _writeCommand(reg / 256 , reg % 256);
   _writeData(data / 256, data % 256);
 end
@@ -196,27 +197,27 @@ _maxX = ILI9225_LCD_WIDTH
 _maxY = ILI9225_LCD_HEIGHT
 
 function _orientCoordinates(x1, y1)
-  if _orientation == 0 then return x1, y1
-  elseif _orientation == 1 then return _maxY - y1 - 1, x1
-  elseif _orientation == 2 then return _maxX - x1 - 1, _maxY - y1 - 1
-  else return y1, _maxX - x1 - 1 end
+    if _orientation == 0 then return x1, y1
+    elseif _orientation == 1 then return _maxY - y1 - 1, x1
+    elseif _orientation == 2 then return _maxX - x1 - 1, _maxY - y1 - 1
+    else return y1, _maxX - x1 - 1 end
 end
 
 function setOrientation(orientation)
-  _orientation = orientation % 4
-  if _orientation == 0 then
-     _maxX = ILI9225_LCD_WIDTH
-     _maxY = ILI9225_LCD_HEIGHT
-  elseif _orientation == 1 then
-     _maxX = ILI9225_LCD_HEIGHT
-     _maxY = ILI9225_LCD_WIDTH
-  elseif orientation == 2 then
-     _maxX = ILI9225_LCD_WIDTH
-     _maxY = ILI9225_LCD_HEIGHT
-  else
-     _maxX = ILI9225_LCD_HEIGHT
-     _maxY = ILI9225_LCD_WIDTH
-  end
+    _orientation = orientation % 4
+    if _orientation == 0 then
+        _maxX = ILI9225_LCD_WIDTH
+        _maxY = ILI9225_LCD_HEIGHT
+    elseif _orientation == 1 then
+        _maxX = ILI9225_LCD_HEIGHT
+        _maxY = ILI9225_LCD_WIDTH
+    elseif orientation == 2 then
+        _maxX = ILI9225_LCD_WIDTH
+        _maxY = ILI9225_LCD_HEIGHT
+    else
+        _maxX = ILI9225_LCD_HEIGHT
+        _maxY = ILI9225_LCD_WIDTH
+    end
 end
 
 function _setWindow(x0, y0, x1, y1)
@@ -239,11 +240,11 @@ function _setWindow(x0, y0, x1, y1)
 end
 
 function RGB888_RGB565(color)
-  return bit.bor(
-    bit.lshift(bit.band(bit.rshift(color,19), 0x1f), 11),
-    bit.lshift(bit.band(bit.rshift(color,10), 0x3f), 5),
-    bit.band(bit.rshift(color,3), 0x1f)
-  )
+    return bit.bor(
+        bit.lshift(bit.band(bit.rshift(color,19), 0x1f), 11),
+        bit.lshift(bit.band(bit.rshift(color,10), 0x3f), 5),
+        bit.band(bit.rshift(color,3), 0x1f)
+    )
 end
 
 function writen()
@@ -262,29 +263,28 @@ function writen()
 end
   
 function twrite(n, HI, LO)
-  _n= n
-  _HI= HI
-  _LO= LO
-  writen()
+    _n= n
+    _HI= HI
+    _LO= LO
+    writen()
 end
 
 function fillRectangle(x1, y1, x2, y2, color)
-  _setWindow(x1, y1, x2, y2)
-  twrite((y2 - y1 + 1) * (x2 - x1 + 1), color / 256, color)
+    _setWindow(x1, y1, x2, y2)
+    twrite((y2 - y1 + 1) * (x2 - x1 + 1), color / 256, color)
 end
 
 function clear()
-  local old = _orientation
-  setOrientation(0)
-  fillRectangle(0, 0, _maxX - 1, _maxY - 1, _bgColor)
-  setOrientation(old)
-  tmr.delay(10)
+    local old = _orientation
+    setOrientation(0)
+    fillRectangle(0, 0, _maxX - 1, _maxY - 1, _bgColor)
+    setOrientation(old)
+    tmr.delay(10)
 end
 
 -- tmr.alarm(1,10,0,clear)
 
 ---------------------------------------------------
---
 
 setOrientation(1) -- use 0 for portrait
 
@@ -354,6 +354,6 @@ end
 
 telnet_srv = net.createServer(net.TCP, 10)
 telnet_srv:listen(12345, function(conn)
-  conn:on("receive", receiver)
-  conn:on("disconnection", disconnect)
+    conn:on("receive", receiver)
+    conn:on("disconnection", disconnect)
 end)
