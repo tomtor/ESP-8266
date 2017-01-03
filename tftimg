@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#exit 0
+
+OUT=/tmp/canvas.rgb
+
+convert -depth 8 -size 220x176 -pointsize 30 xc:black \
+ -gravity northwest -fill 'rgb(0,255,0)' -draw "text 0,0 '$1 °C'" \
+ -gravity northeast -fill 'rgb(255,180,0)' -draw "text 0,0 '$2 °C'" \
+ -gravity center -fill 'rgb(99,184,255)' -draw "text 0,-38 '$3 %Rel'" \
+ -gravity center -fill 'rgb(255,0,255)' -draw "text 0,38 '$4 hPa'" \
+ -gravity south -fill 'rgb(255,0,0)' -draw "text 0,0 '$5 kW'" \
+ -gravity center -pointsize 38 -fill white -draw "text 0,0 '$6'" \
+ $OUT
+#echo raw $(stat -f %z $OUT) 220 0 0 | cat - $OUT | nc -N 192.168.0.206 12345 &
+echo raw $(stat -c %s $OUT) 220 0 0 | cat - $OUT | nc 192.168.0.206 12345
