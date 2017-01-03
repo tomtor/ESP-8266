@@ -304,6 +304,11 @@ function receiver(sck, data)
   if _cnt == 0 then
     _sck= sck
     local ind= data:find("\n")
+    if ind == nil then
+      sck:close()
+      print("no cmd")
+      return
+    end
     local cmd= data:sub(1,ind)
     local words = {}
     for word in cmd:gmatch("%w+") do table.insert(words, word) end
