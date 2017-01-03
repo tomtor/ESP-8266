@@ -252,9 +252,12 @@ function writen()
     if l > 64 then
       l= 64
     end
+    gpio.write(TFT_RS, gpio.HIGH)
+    gpio.write(TFT_CS, gpio.LOW)
     for i= 1, l do 
-      _writeData(_HI, _LO)
+      spi.send(1, _HI, _LO)
     end
+    gpio.write(TFT_CS, gpio.HIGH)
     if _n > 64
     then
       _n= _n - 64
