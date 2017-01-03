@@ -9,3 +9,7 @@ matrix.lua: show scrolling text on an 5x8 WS2812 display
 (http://v7f.eu/public/matrix.jpg)
 
 matrix.py: python driver for matrix.lua
+
+tft.lua: draw an image on an ILI9225 176x220 LCD display
+
+tftimg: shell script driver for tft.lua
