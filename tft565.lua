@@ -215,6 +215,7 @@ function _setWindow(x0, y0, x1, y1)
     _writeCommand(0x00, 0x22)
 end
 
+--[[
 function RGB888_RGB565(color)
     return bit.bor(
         bit.lshift(bit.band(bit.rshift(color,19), 0x1f), 11),
@@ -261,6 +262,18 @@ function clear()
     tmr.delay(10)
 end
 
+--]]
+
+_blinkcnt= 0
+function blink()
+  if _blinkcnt % 2 == 1 then
+    gpio.write(TFT_LED, gpio.HIGH)
+  else
+    gpio.write(TFT_LED, gpio.LOW)
+  end
+  _blinkcnt= _blinkcnt + 1
+end
+
 -- tmr.alarm(1,10,0,clear)
 
 ---------------------------------------------------
@@ -275,6 +288,8 @@ _width= 0
 _x= 0
 _y= 0
 
+_cmd= ""
+
 function receiver(sck, data)
 
   if _sck == nil then
@@ -288,7 +303,18 @@ function receiver(sck, data)
     local cmd= data:sub(1,ind)
     local words = {}
     for word in cmd:gmatch("%w+") do table.insert(words, word) end
-    print(words[1])
+    _cmd= words[1]
+    print(_cmd)
+    if _cmd == "blink" then
+      if words[2] == "on" then
+        tmr.alarm(0, 1000, tmr.ALARM_AUTO, blink)
+      else
+        tmr.unregister(0)
+        gpio.write(TFT_LED, gpio.HIGH)
+      end
+      sck:close()
+      return
+    end
     data= data:sub(ind+1)
     _size= tonumber(words[2])
     _width= tonumber(words[3])
@@ -307,7 +333,7 @@ function receiver(sck, data)
       gpio.write(TFT_RS, gpio.HIGH)
       gpio.write(TFT_CS, gpio.LOW)
     end
-    line= data:sub(1, 2 * _width - nrbleft)
+    local line= data:sub(1, 2 * _width - nrbleft)
     spi.send(1, line)
     data= data:sub(line:len() + 1)
     _cnt= _cnt + line:len()
@@ -322,7 +348,7 @@ function disconnect(sck)
     if sck == _sck then
         gpio.write(TFT_CS, gpio.HIGH)
         print("discon")
-        sck:close()
+        -- sck:close()
         _cnt= 0
         _sck= nil
     else
