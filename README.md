@@ -13,3 +13,7 @@ matrix.py: python driver for matrix.lua
 tft.lua: draw an image on an ILI9225 176x220 LCD display
 
 tftimg: shell script driver for tft.lua
+
+tft565.lua: optimized version of tft.lua
+
+tft565.py: driver for tft565.lua

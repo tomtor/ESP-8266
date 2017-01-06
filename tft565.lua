@@ -268,8 +268,7 @@ end
 setOrientation(1) -- use 0 for portrait
 
 _cnt= 0
-_sck= 0
-_start= false
+_sck= nil
 
 _size= 0
 _width= 0
@@ -278,9 +277,7 @@ _y= 0
 
 function receiver(sck, data)
 
-  if _start then
-    _start= false
-  elseif _cnt == 0 then
+  if _sck == nil then
     _sck= sck
     local ind= data:find("\n")
     if ind == nil then
@@ -297,7 +294,6 @@ function receiver(sck, data)
     _width= tonumber(words[3])
     _x= tonumber(words[4])
     _y= tonumber(words[5])
-    _start= true
   elseif sck ~= _sck then
     sck:close()
     print("dup")
@@ -328,6 +324,7 @@ function disconnect(sck)
         print("discon")
         sck:close()
         _cnt= 0
+        _sck= nil
     else
         print("drop")
     end
