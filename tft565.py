@@ -51,7 +51,7 @@ s.connect((display, port))
 with open(file, 'rb') as imgfile:
     data= imgfile.read()
 
-ib= bytearray(int(len(data) * 2 / 3))
+ib= bytearray(len(data) * 2 // 3)
 cmd= "rgb565 " + str(len(ib)) + " " + str(width) + " " + str(x) + " " + str(y) + "\n"
 
 b= bytearray(len(cmd))
